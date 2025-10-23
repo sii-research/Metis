@@ -122,6 +122,87 @@ class BlockQuantFunc(QuantFunc):
         return x, s
     
 
+class Cast2MXFp4e2m1Block(BlockQuantFunc):
+    @classmethod
+    @torch.no_grad()
+    def get_scalar(cls, x: torch.Tensor):
+        x = x.reshape(-1, x.shape[-1])
+        rows = x.shape[0]
+        cols = x.shape[1]
+        
+        brows = BlockQuantFunc.block_shape[0]
+        bcols = BlockQuantFunc.block_shape[1]
+        
+        assert(rows % brows == 0 and cols % bcols == 0)
+        
+        x = x.abs() \
+             .view(rows // brows, brows, cols // bcols, bcols) \
+             .amax(dim=(1, 3), keepdim=True) \
+             .view(rows // brows, cols // bcols) \
+             / 6 + 1e-9
+        
+        return x
+    
+    @classmethod
+    @torch.no_grad()
+    def quant(cls, x: torch.Tensor, s: torch.Tensor):
+        xshape = x.shape
+        x, s = BlockQuantFunc._reshape(x, s)
+        return Cast2Fp4e2m1Random.quant(x, s).view(xshape)
+    
+    @classmethod
+    @torch.no_grad()
+    def rquant(cls, x: torch.Tensor, s: torch.Tensor):
+        xshape = x.shape
+        s = s.sign() * (2 ** ((s + 1e-127).log2().clamp_(-127, 127).round_()))
+        
+        x, s = BlockQuantFunc._reshape(x, s)
+        return Cast2Fp4e2m1Random.rquant(x, s).view(xshape)
+
+class Cast2NVFp4e2m1Block(BlockQuantFunc):
+    @classmethod
+    @torch.no_grad()
+    def get_scalar(cls, x: torch.Tensor):
+        x = x.reshape(-1, x.shape[-1])
+        rows = x.shape[0]
+        cols = x.shape[1]
+        
+        brows = BlockQuantFunc.block_shape[0]
+        bcols = BlockQuantFunc.block_shape[1]
+        
+        assert(rows % brows == 0 and cols % bcols == 0)
+        
+        x = x.abs() \
+             .view(rows // brows, brows, cols // bcols, bcols) \
+             .amax(dim=(1, 3), keepdim=True) \
+             .view(rows // brows, cols // bcols) \
+             / 6 + 1e-9
+        
+        return x
+    
+    @classmethod
+    @torch.no_grad()
+    def quant(cls, x: torch.Tensor, s: torch.Tensor):
+        xshape = x.shape
+        smax = s.abs().max(dim=0, keepdim=True).values
+        s /= smax / 448
+        s.to(dtype=torch.float8_e4m3fn).to(dtype=torch.float32)
+        s *= smax / 448
+        x, s = BlockQuantFunc._reshape(x, s)
+        return Cast2Fp4e2m1Random.quant(x, s).view(xshape)
+    
+    @classmethod
+    @torch.no_grad()
+    def rquant(cls, x: torch.Tensor, s: torch.Tensor):
+        xshape = x.shape
+        smax = s.abs().max(dim=0, keepdim=True).values
+        s /= smax / 448
+        s.to(dtype=torch.float8_e4m3fn).to(dtype=torch.float32)
+        s *= smax / 448
+        
+        x, s = BlockQuantFunc._reshape(x, s)
+        return Cast2Fp4e2m1Random.rquant(x, s).view(xshape)
+
 class Cast2Fp4e2m1Block(BlockQuantFunc):
     @classmethod
     @torch.no_grad()
@@ -236,6 +317,8 @@ def cast_2_fp32(x):
 quant_func = {
     "fp4e2m1": Cast2Fp4e2m1,
     "fp4e2m1b": Cast2Fp4e2m1Block,
+    "nvfp4e2m1b": Cast2NVFp4e2m1Block,
+    "mxfp4e2m1b": Cast2MXFp4e2m1Block,
     "fp6e3m2": Cast2Fp6e3m2,
     "fp6e3m2b": Cast2Fp6e3m2Block,
     "fp8e4m3": Cast2Fp8e4m3,
@@ -243,3 +326,15 @@ quant_func = {
     "fp32": Cast2Fp32,
     "1p58bit": WeightQuant,
 }
+
+
+
+if __name__ == "__main__":
+    x = torch.randn([1, 16])
+    print(x)
+    s = Cast2Fp4e2m1Block.get_scalar(x)
+    qx = Cast2Fp4e2m1Block.quant(x, s)
+    qx = Cast2Fp4e2m1Block.rquant(qx, s)
+
+    print(qx)
+    # print(qx / s)
