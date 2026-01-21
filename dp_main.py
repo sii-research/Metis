@@ -65,7 +65,6 @@ def train(args):
         writer = SummaryWriter(f"{args.log_dir}/{args.tag}")
 
     dataloader = load_dataset(args)
-    print("ddddd", len(dataloader))
     model = load_model(args)
 
     model.train()
