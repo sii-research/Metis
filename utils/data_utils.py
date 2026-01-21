@@ -1,4 +1,5 @@
 import torch
+import json
 import tiktoken
 
 from torch.utils.data import Dataset
@@ -42,7 +43,8 @@ def r50k_base(args):
 
 def find_files(root_dir):
     root_path = Path(root_dir)
-    return [str(file) for file in root_path.rglob('cut*/*.jsonl')]
+    return [str(file) for file in root_path.rglob('local-shard*/*.jsonl')]
+    # return [str(file) for file in root_path.rglob('cut*/*.jsonl')]
 
 class Tokenized_data(Dataset):
     def __init__(self, args, start_from = 0) -> None:
@@ -73,6 +75,7 @@ class Tokenized_data(Dataset):
             self.file_index += 1
             self.line_index = 0
         text = self.file_texts[self.line_index].replace('<|', '').replace('|>', '')
+        text = json.loads(json.loads(text))
 
         self.line_index += 1
 
