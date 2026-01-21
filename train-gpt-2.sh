@@ -34,8 +34,8 @@ nohup python dp_main.py > /inspire/hdd/project/yunweiyuhuifu/p-shangli/cmy/Metis
     --q-backward-outputgrad nvfp4e2m1b \
     --enable-lowbit \
     --save-steps 10000 \
-    --enable-forward-svd-intime \
-    --forward-lowrank-svd-intime 16 \
+    --enable-forward-svd \
+    --forward-lowrank-svd 16 \
     --enable-backward-svd \
     --backward-lowrank-svd 16 \
     --backward-lowrank-niter 2 \
