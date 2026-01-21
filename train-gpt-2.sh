@@ -40,3 +40,7 @@ nohup python dp_main.py > /inspire/hdd/project/yunweiyuhuifu/p-shangli/cmy/Metis
     --backward-lowrank-svd 16 \
     --backward-lowrank-niter 2 \
     --backward-broadcast-dim -1 \
+    --enable-activation-svd \
+    --activation-lowrank-svd 64 \
+    --activation-lowrank-niter 2 \
+    --activation-broadcast-dim -1 \
