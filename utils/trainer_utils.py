@@ -111,6 +111,7 @@ def parse():
     parser.add_argument("--reg-lambda", type=float, default=0.0)
     parser.add_argument("--reg-beta", type=int, default=2)
     
+    parser.add_argument("--enable-nv-recipe", action="store_true")
 
     # gpt config
     parser.add_argument("--embed-dim", type=int, default=768)
@@ -160,11 +161,15 @@ def parse():
     parser.add_argument("--activation-lowrank-svd", type=int, default=-1)
     parser.add_argument("--activation-lowrank-niter", type=int, default=0)
     
+    parser.add_argument("--enable-forward-svd-intime", action="store_true")
+    parser.add_argument("--forward-lowrank-svd-intime", type=int, default=0)
+    
     parser.add_argument("--backward-longtail-schedule", type=str, default="none")
     parser.add_argument("--activation-longtail-schedule", type=str, default="none")
     parser.add_argument("--backward-broadcast-dim", type=int, default=-1)
     parser.add_argument("--activation-broadcast-dim", type=int, default=-1)
-    
+    parser.add_argument("--gradacc-broadcast", action="store_true")
+    parser.add_argument("--gradacc-broadcast-steps", type=int, default=1)
     
     
     args = parser.parse_args()
