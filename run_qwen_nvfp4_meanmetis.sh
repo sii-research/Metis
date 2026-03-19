@@ -3,7 +3,7 @@ export NCCL_ALGO=Ring
 # export CUDA_VISIBLE_DEVICES=0,1,2,3
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
-TAG="Qwen0.6B-nvfp4-metis-mean-mean"
+TAG="Qwen0.6B-nvfp4-metis-mean-mean-fix"
 
 NPROC=8
 
@@ -58,15 +58,15 @@ ARGS+=" --activation-metis-mode mean"
 ARGS+=" --gout-metis-mode mean"
 ARGS+=" --enable-forward-svd"
 ARGS+=" --forward-svd-rank 16"
-# ARGS+=" --enable-activation-svd"
-# ARGS+=" --activation-lowrank-svd 16"
-# ARGS+=" --activation-lowrank-niter 2"
-# ARGS+=" --activation-broadcast-dim -1"
-# ARGS+=" --enable-backward-svd"
-# ARGS+=" --backward-lowrank-svd 16"
-# ARGS+=" --backward-lowrank-niter 2"
-# ARGS+=" --backward-broadcast-dim -1"
-ARGS+=" --load-from ${LOAD_DIR}"
+ARGS+=" --enable-activation-svd"
+ARGS+=" --activation-lowrank-svd 16"
+ARGS+=" --activation-lowrank-niter 2"
+ARGS+=" --activation-broadcast-dim -1"
+ARGS+=" --enable-backward-svd"
+ARGS+=" --backward-lowrank-svd 16"
+ARGS+=" --backward-lowrank-niter 2"
+ARGS+=" --backward-broadcast-dim -1"
+# ARGS+=" --load-from ${LOAD_DIR}"
 
 
 WORK_DIR="/inspire/hdd/project/yunweiyuhuifu/p-shangli/cmy/Metis-Hif4"

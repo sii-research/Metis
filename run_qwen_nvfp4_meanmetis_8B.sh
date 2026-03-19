@@ -3,7 +3,7 @@ export NCCL_NVLS_ENABLE=0
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
 NRANK=1
-TAG="8B_nvfp4_meanmetis_${NRANK}"
+TAG="8B_nvfp4_meanmetis_${NRANK}-fix"
 
 NPROC=4
 
@@ -57,14 +57,14 @@ ARGS+=" --activation-metis-mode mean"
 ARGS+=" --gout-metis-mode mean"
 ARGS+=" --enable-forward-svd"
 ARGS+=" --forward-svd-rank 64"
-# ARGS+=" --enable-activation-svd"
-# ARGS+=" --activation-lowrank-svd 16"
-# ARGS+=" --activation-lowrank-niter 2"
-# ARGS+=" --activation-broadcast-dim -1"
-# ARGS+=" --enable-backward-svd"
-# ARGS+=" --backward-lowrank-svd 16"
-# ARGS+=" --backward-lowrank-niter 2"
-# ARGS+=" --backward-broadcast-dim -1"
+ARGS+=" --enable-activation-svd"
+ARGS+=" --activation-lowrank-svd 16"
+ARGS+=" --activation-lowrank-niter 2"
+ARGS+=" --activation-broadcast-dim -1"
+ARGS+=" --enable-backward-svd"
+ARGS+=" --backward-lowrank-svd 16"
+ARGS+=" --backward-lowrank-niter 2"
+ARGS+=" --backward-broadcast-dim -1"
 ARGS+=" --pp-size 2"
 ARGS+=" --pp-chunks 8"
 ARGS+=" --pp-checkpoint never"

@@ -2,7 +2,7 @@ export NCCL_DEBUG=INFO
 export NCCL_ALGO=Ring             
 export CUDA_VISIBLE_DEVICES=0,1,2,3
 
-TAG="Qwen0.6B-mxfp4-metis-mean-mean"
+TAG="Qwen0.6B-mxfp4-metis-mean-mean-fix"
 
 NPROC=4
 
@@ -57,6 +57,14 @@ ARGS+=" --activation-metis-mode mean"
 ARGS+=" --gout-metis-mode mean"
 ARGS+=" --enable-forward-svd"
 ARGS+=" --forward-svd-rank 16"
+ARGS+=" --enable-activation-svd"
+ARGS+=" --activation-lowrank-svd 16"
+ARGS+=" --activation-lowrank-niter 2"
+ARGS+=" --activation-broadcast-dim -1"
+ARGS+=" --enable-backward-svd"
+ARGS+=" --backward-lowrank-svd 16"
+ARGS+=" --backward-lowrank-niter 2"
+ARGS+=" --backward-broadcast-dim -1"
 # ARGS+=" --load-from ${LOAD_DIR}"
 
 
